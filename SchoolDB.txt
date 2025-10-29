@@ -1,0 +1,88 @@
+USE master;
+GO
+
+-- Tạo cơ sở dữ liệu
+CREATE DATABASE SchoolDB;
+GO
+
+USE SchoolDB;
+GO
+
+-- Tạo bảng Subject
+CREATE TABLE Subject (
+    Id INT PRIMARY KEY IDENTITY(1,1),
+    Name NVARCHAR(100) NOT NULL,
+    NumberOfSlot INT NOT NULL
+);
+GO
+
+-- Tạo bảng Student
+CREATE TABLE Student (
+    Id INT PRIMARY KEY IDENTITY(1,1),
+    Name NVARCHAR(100) NOT NULL,
+    Dob DATE NOT NULL
+);
+GO
+
+-- Tạo bảng Course
+CREATE TABLE Course (
+    Id INT PRIMARY KEY IDENTITY(1,1),
+    Title NVARCHAR(100) NOT NULL,
+    StartDate DATE NOT NULL,
+    EndDate DATE NOT NULL,
+    SubjectId INT NOT NULL,
+    FOREIGN KEY (SubjectId) REFERENCES Subject(Id)
+);
+GO
+
+-- Tạo bảng trung gian StudentCourse (cho mối quan hệ nhiều-nhiều giữa Student và Course, có thuộc tính Mark)
+CREATE TABLE StudentCourse (
+    StudentId INT NOT NULL,
+    CourseId INT NOT NULL,
+    Mark FLOAT NULL, -- Thuộc tính Mark để lưu điểm
+    PRIMARY KEY (StudentId, CourseId),
+    FOREIGN KEY (StudentId) REFERENCES Student(Id),
+    FOREIGN KEY (CourseId) REFERENCES Course(Id)
+);
+GO
+
+-- Chèn dữ liệu vào bảng Subject
+INSERT INTO Subject (Name, NumberOfSlot) VALUES
+('Mathematics', 30),
+('Physics', 25),
+('Computer Science', 40),
+('English', 20),
+('Chemistry', 28);
+GO
+
+-- Chèn dữ liệu vào bảng Student
+INSERT INTO Student (Name, Dob) VALUES
+('Nguyen Van A', '2000-05-15'),
+('Tran Thi B', '2001-08-22'),
+('Le Van C', '1999-12-10'),
+('Pham Thi D', '2000-03-30'),
+('Hoang Van E', '2001-07-18');
+GO
+
+-- Chèn dữ liệu vào bảng Course
+INSERT INTO Course (Title, StartDate, EndDate, SubjectId) VALUES
+('Algebra I', '2025-01-10', '2025-06-10', 1),
+('Mechanics', '2025-02-01', '2025-07-01', 2),
+('Programming Basics', '2025-03-15', '2025-08-15', 3),
+('English Grammar', '2025-01-20', '2025-05-20', 4),
+('Organic Chemistry', '2025-04-01', '2025-09-01', 5);
+GO
+
+-- Chèn dữ liệu vào bảng StudentCourse với điểm (Mark)
+INSERT INTO StudentCourse (StudentId, CourseId, Mark) VALUES
+(1, 1, 8.5),  -- Nguyen Van A học Algebra I, điểm 8.5
+(1, 3, 7.8),  -- Nguyen Van A học Programming Basics, điểm 7.8
+(2, 2, 9.0),  -- Tran Thi B học Mechanics, điểm 9.0
+(2, 4, 6.5),  -- Tran Thi B học English Grammar, điểm 6.5
+(3, 1, 7.0),  -- Le Van C học Algebra I, điểm 7.0
+(3, 5, 8.0),  -- Le Van C học Organic Chemistry, điểm 8.0
+(4, 3, 9.5),  -- Pham Thi D học Programming Basics, điểm 9.5
+(4, 4, 8.2),  -- Pham Thi D học English Grammar, điểm 8.2
+(5, 2, 7.5),  -- Hoang Van E học Mechanics, điểm 7.5
+(5, 5, 8.8); -- Hoang Van E học Organic Chemistry, điểm 8.8
+GO
