@@ -1,0 +1,41 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@using MVCWebApp_View.Models
+@using MVCWebApp_View.Models
+@model Course
+
+@if (Model != null)
+{
+    <div>
+        <h1>Thong tin course</h1>
+        <div>
+            <div>CourseId: @Model.Id</div>
+            <div>Title: @Model.Title</div>
+            <div>StartDate: @Model.StartDate</div>
+            <div>EndDate: @Model.EndDate</div>
+            <div>Subject: @Model.Subject.Name</div>
+            <div>NumberOfSlot: @Model.Subject.NumberOfSlot</div>
+        </div>
+        <div>
+            @if (Model.Students.Count == 0)
+            {
+                <div>No Student</div>
+            }
+            else
+            {
+                <div>
+                    <h2>List of Students:</h2>
+                    @foreach(Student s in Model.Students)
+                    {
+                        <div>@s.Name</div>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+}
+else
+{
+    <h1>No course</h1>
+}

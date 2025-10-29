@@ -1,0 +1,90 @@
+﻿@page "{subjectId?}"
+@model MVCWebApp_RazorPages.Pages.Courses.IndexModel
+@using MVCWebApp_RazorPages.Models
+@using MVCWebApp_RazorPages.Services
+
+@{
+    ViewData["Title"] = "Course List";
+}
+
+@* Môi trường .NET 8: *@
+@* .NET 8 tiếp tục sử dụng tính năng nullable reference types (NRT) được bật mặc định, giúp phát hiện các lỗi liên quan đến null tại thời điểm biên dịch. *@
+@* Lỗi CS8602 xảy ra vì ViewData["Subjects"] as List<Subject> *@
+@*     có thể trả về null, và trình biên dịch yêu cầu kiểm tra null trước khi sử dụng. *@
+@*     Giải pháp 4 trong .NET 8: *@
+@*     Chuyển ViewData["Subjects"] thành một thuộc tính của IndexModel là cách tiếp cận phù hợp, vì nó: *@
+@*     Tránh việc sử dụng ViewData (dễ gây lỗi null và khó bảo trì). *@
+@*     Tận dụng thuộc tính của Page Model để truyền dữ liệu một cách mạnh mẽ hơn. *@
+@*     Đảm bảo dữ liệu luôn được khởi tạo (không null) để tránh lỗi CS8602. *@
+
+
+
+<div>
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage)) // Kiểm tra nếu có thông báo lỗi
+    {
+        <div class="alert alert-danger">
+            @Model.ErrorMessage // Hiển thị thông báo lỗi
+        </div>
+    }
+    <div>
+        <h1>List of Subjects:</h1> <!-- Tiêu đề cho danh sách môn học -->
+        @if (Model.Subjects.Any()) // Kiểm tra Subjects có phần tử
+        {
+            @foreach (Subject subject in Model.Subjects) // Lặp qua danh sách môn học từ Page Model
+            {
+                <div>
+                    <!-- Tạo liên kết để lọc khóa học theo môn học -->
+                    <a asp-page="/Courses/Index" asp-route-subjectId="@subject.Id">@subject.Name</a>
+                </div>
+            }
+        }
+        else
+        {
+            <p>No subjects available.</p>
+            // Hiển thị thông báo nếu không có môn học
+        }
+    </div>
+    <h1>List of Courses</h1> <!-- Tiêu đề cho danh sách khóa học -->
+    <h2>Number of Courses: @Model.Courses.Count</h2> <!-- Hiển thị số lượng khóa học -->
+    <div>
+        <!-- Liên kết để thêm khóa học mới -->
+        <a asp-page="/Courses/Create" asp-route-subjectId="@ViewData["CurSubjectId"]">Add New Course</a>
+    </div>
+    @if (Model.Courses.Any()) // Kiểm tra nếu có khóa học để hiển thị
+    {
+        <table class="table">
+            <!-- Tạo bảng để hiển thị danh sách khóa học -->
+            <thead>
+                <tr>
+                    <th>CourseID</th> <!-- Cột ID khóa học -->
+                    <th>Title</th> <!-- Cột tiêu đề khóa học -->
+                    <th>StartDate</th> <!-- Cột ngày bắt đầu -->
+                    <th>SubjectName</th> <!-- Cột tên môn học -->
+                    <th>NumberOfSlot</th> <!-- Cột số lượng slot -->
+                    <th>Action</th> <!-- Cột hành động (Edit/Delete) -->
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (Course c in Model.Courses) // Lặp qua danh sách khóa học từ Page Model
+                {
+                    <tr>
+                        <td>@c.Id</td> <!-- Hiển thị ID khóa học -->
+                        <!-- Liên kết đến trang chi tiết của khóa học -->
+                        <td><a asp-page="/Courses/Detail" asp-route-id="@c.Id">@c.Title</a></td>
+                        <td>@c.StartDate</td> <!-- Hiển thị ngày bắt đầu -->
+                        <td>@c.Subject?.Name</td> <!-- Sử dụng ?. để tránh lỗi null -->
+                        <td>@c.Subject?.NumberOfSlot</td> <!-- Sử dụng ?. để tránh lỗi null -->
+                        <td>
+                            <!-- Liên kết để chỉnh sửa khóa học -->
+                            <a asp-page="/Courses/Edit" asp-route-id="@c.Id">Edit</a> |
+                            <!-- Form để xóa khóa học, sử dụng method POST và handler Delete -->
+                            <form method="post" asp-page-handler="Delete" asp-route-id="@c.Id" asp-route-sid="@ViewData["CurSubjectId"]" style="display:inline;">
+                                <input type="submit" value="Delete" class="btn btn-danger" /> <!-- Nút xóa -->
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>

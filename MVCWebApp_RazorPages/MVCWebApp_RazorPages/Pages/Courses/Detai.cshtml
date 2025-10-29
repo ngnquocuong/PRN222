@@ -1,0 +1,45 @@
+﻿@page "{id}"
+@model MVCWebApp_RazorPages.Pages.Courses.DetailModel
+@using MVCWebApp_RazorPages.Models
+
+@{
+    ViewData["Title"] = "Course Detail";
+}
+
+@if (Model.Course != null)
+{
+    <div>
+        <h1>Thong tin course</h1>
+        <div>
+            <div>CourseId: @Model.Course.Id</div>
+            <div>Title: @Model.Course.Title</div>
+            <div>StartDate: @Model.Course.StartDate</div>
+            <div>EndDate: @Model.Course.EndDate</div>
+            <div>Subject: @Model.Course.Subject.Name</div>
+            <div>NumberOfSlot: @Model.Course.Subject.NumberOfSlot</div>
+        </div>
+        <div>
+            @if (Model.Course.Students.Count == 0)
+            {
+                <div>No Student</div>
+            }
+            else
+            {
+                <div>
+                    <h2>List of Students:</h2>
+                    @foreach (Student s in Model.Course.Students)
+                    {
+                        <div>@s.Name</div>
+                    }
+                </div>
+            }
+        </div>
+        <div>
+            <a asp-page="/Courses/Index" asp-route-subjectId="@Model.Course.SubjectId">Back to List</a>
+        </div>
+    </div>
+}
+else
+{
+    <h1>No course</h1>
+}

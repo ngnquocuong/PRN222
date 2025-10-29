@@ -1,0 +1,33 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@using MVCWebApp_CRUD.Models
+
+
+<div>
+    <form action="/Course/DoAdd" method="post">
+        <div>
+            Title: <input type="text" name="newCourse.Title" />
+        </div>
+        <div>
+            StartDate: <input type="date" name="newCourse.StartDate" />
+        </div>
+        <div>
+            StartDate: <input type="date" name="newCourse.EndDate" />
+        </div>
+        <div>
+            Subject:
+            <select name="newCourse.SubjectId">
+                @foreach(Subject subject in ViewBag.Subjects)
+                {
+                    <option value="@subject.Id" @(subject.Id == ViewBag.CurSubjectId?"selected":"") >
+                        @subject.Name
+                    </option>
+                }
+            </select>
+        </div>
+        <div>
+            <input type="submit" value="Add new Course" />
+        </div>
+    </form>
+</div>
